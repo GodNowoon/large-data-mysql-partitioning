@@ -70,31 +70,9 @@ OS에서 mysql의 메모리 사이즈를 1M로 설정해도 mysql에서 약 5M�
 
 <img width="1288" height="141" alt="image 2" src="https://github.com/user-attachments/assets/222fe8a4-1bd5-4f55-b4c9-b6b6a34d174b" />
 
+-----------------------------------------------------------
 
-
-### 메모리 5MB ,파티셔닝 전
-
-<img width="1288" height="331" alt="image 3" src="https://github.com/user-attachments/assets/fbcd68a3-5a2c-462a-a2b1-d6d467819834" />
-
-
-**파티셔닝을 하기 전에는 최대 2.11초까지 소요가 된다.**
-
-<img width="1288" height="577" alt="image 4" src="https://github.com/user-attachments/assets/93b8d2f7-44de-4645-b307-1248f2731b8e" />
-
-
-## 메모리 5MB, 파티셔닝 후
-
-데이터베이스에서 적용된 메모리 크기 확인을 위한 명령어.
-
-<img width="1288" height="331" alt="image 3" src="https://github.com/user-attachments/assets/8c3daaf7-dd21-4be2-9e64-8cc68355de36" />
-
-
-파티셔닝을 진행한 후, 최대 0.7초까지 확인했으며, 평균 0.3~0.4초 정도 소요되는 것을 확인할 수 있었습니다.
-
-<img width="1155" height="450" alt="image 5" src="https://github.com/user-attachments/assets/f348a8a1-9a07-4c34-a27d-f479bdcfbd43" />
-
-
-파티션 테이블 생성 및 데이터 삽입
+## 파티션 테이블 생성 및 데이터 삽입
 
 ```sql
 CREATE TABLE survey_partitioned (
@@ -155,6 +133,27 @@ WHERE Country = 'United States of America' and age = 'Under 18 years old';
 ```
 
 
+
+**파티셔닝을 하기 전에는 최대 2.11초까지 소요가 된다.**
+
+<img width="1288" height="577" alt="image 4" src="https://github.com/user-attachments/assets/93b8d2f7-44de-4645-b307-1248f2731b8e" />
+
+
+## 메모리 5MB, 파티셔닝 후
+
+데이터베이스에서 적용된 메모리 크기 확인을 위한 명령어.
+
+<img width="1288" height="331" alt="image 3" src="https://github.com/user-attachments/assets/8c3daaf7-dd21-4be2-9e64-8cc68355de36" />
+
+
+파티셔닝을 진행한 후, 최대 0.7초까지 확인했으며, 평균 0.3~0.4초 정도 소요되는 것을 확인할 수 있었습니다.
+
+<img width="1155" height="450" alt="image 5" src="https://github.com/user-attachments/assets/f348a8a1-9a07-4c34-a27d-f479bdcfbd43" />
+
+
+
+
+----------------------------------------------------------------------
 
 
 
