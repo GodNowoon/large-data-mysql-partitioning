@@ -32,8 +32,8 @@
 </table>
 
 ## 📌 프로젝트 개요
-- **목표**: Stack Overflow의 개발자 설문 데이터를 MySQL에 적재하고, 파티셔닝을 적용하여 대용량 데이터 처리 성능을 실습하고 분석합니다.
-- **핵심 내용**: 파티셔닝 전/후 성능 비교, 쿼리 효율성 실험, 실시간 데이터 탐색성 향상
+- **목표**: Stack Overflow의 개발자 설문 데이터를 MySQL에 적재하고, 파티셔닝을 적용하여 대용량 데이터 처리하고 성능 분석
+- **핵심 내용**: 파티셔닝 전/후 성능 비교, 쿼리 효율성 실험, 데이터 탐색성 향상
 
 ## 📂 데이터셋
 - **출처**: [Stack Overflow Developer Survey](https://insights.stackoverflow.com/survey)
@@ -45,10 +45,10 @@
 ## 🧱 시스템 구성
 - **Database**: MySQL
 - **개발 환경**: Google Colab, DBeaver
-- **기술 스택**: SQL, MySQL Partitioning, CSV Import
+  
 
 
-# 파티셔닝 전 / 후 메모리 5mb일때 소요 시간.
+# 파티셔닝 전 / 후 메모리 5MB일때 소요 시간.
 
 실제 운영 환경에서는 훨씬 더 큰 자원으로 서비스를 운영하지만, 제한된 자원으로 운영하는 상황이 발생하고, 파티셔닝 전/후 비교를 명확히 확인하기 위해서, mysql에 할당되는 메모리 크기를 하한선까지 설정한 후, 결과 비교를 진행했습니다.
 
@@ -131,33 +131,47 @@ FROM survey_partitioned
 WHERE Country = 'United States of America' and age = 'Under 18 years old';
 
 ```
+## 📈 쿼리 성능 비교
 
+### ✅ 원본 테이블 (merged_survey)
 
+```sql
+-> Filter: ((merged_survey.Age = 'Under 18 years old') 
+         and (merged_survey.Country = 'United States of America'))  
+   (cost=23706 rows=2245) (actual time=2.112..1186 rows=2171 loops=1)
+    -> Table scan on merged_survey  
+       (cost=23706 rows=224547) (actual time=0.0607..904 rows=227889 loops=1)
 
-**파티셔닝을 하기 전에는 최대 2.11초까지 소요가 된다.**
+-> Filter: ((merged_survey.Age = 'Under 18 years old') 
+         and (merged_survey.Country = 'United States of America'))  
+   (cost=23706 rows=2245) (actual time=1.79..415 rows=2171 loops=1)
+    -> Table scan on merged_survey  
+       (cost=23706 rows=224547) (actual time=0.0984..357 rows=227889 loops=1)
 
-<img width="1288" height="577" alt="image 4" src="https://github.com/user-attachments/assets/93b8d2f7-44de-4645-b307-1248f2731b8e" />
+**파티셔닝을 하기 전에는 최대 2.11초까지 소요되었고 평균 1.7~1.8초정도 소요되었습니다**
+
 
 
 ## 메모리 5MB, 파티셔닝 후
 
-데이터베이스에서 적용된 메모리 크기 확인을 위한 명령어.
+-> Filter: ((survey_partitioned.Age = 'Under 18 years old') 
+         and (survey_partitioned.Country = 'United States of America'))  
+   (cost=4439 rows=429) (actual time=0.442..138 rows=2171 loops=1)
+    -> Table scan on survey_partitioned  
+       (cost=4439 rows=42866) (actual time=0.0748..107 rows=43285 loops=1)
 
-<img width="1288" height="331" alt="image 3" src="https://github.com/user-attachments/assets/8c3daaf7-dd21-4be2-9e64-8cc68355de36" />
-
-
-파티셔닝을 진행한 후, 최대 0.7초까지 확인했으며, 평균 0.3~0.4초 정도 소요되는 것을 확인할 수 있었습니다.
-
-<img width="1155" height="450" alt="image 5" src="https://github.com/user-attachments/assets/f348a8a1-9a07-4c34-a27d-f479bdcfbd43" />
-
-
-
-
-----------------------------------------------------------------------
+-> Filter: ((survey_partitioned.Age = 'Under 18 years old') 
+         and (survey_partitioned.Country = 'United States of America'))  
+   (cost=4439 rows=429) (actual time=0.351..134 rows=2171 loops=1)
+    -> Table scan on survey_partitioned  
+       (cost=4439 rows=42866) (actual time=0.0544..105 rows=43285 loops=1)
 
 
+파티셔닝을 진행한 후, 소요시간이 약 1.4초 줄어들어 평균 0.4초 정도 소요되는 것을 확인할 수 있었습니다.
 
 
+
+```
 ## ✅ 데이터 수집 및 병합
 
 - 2022, 2023, 2024년 설문 결과 CSV 파일을 수집하고, `Age`, `Country`, `CompTotal`, `LanguageHaveWorkedWith`, `DatabaseHaveWorkedWith`, `RemoteWork`, `MainBranch`, `DevType` 컬럼만 선택
@@ -169,9 +183,6 @@ WHERE Country = 'United States of America' and age = 'Under 18 years old';
 merged_df = pd.concat([df_2022, df_2023, df_2024], ignore_index=True)
 merged_df.insert(0, 'user_id', range(1, len(merged_df) + 1))
 
-```
-
----
 
 ## ✅ 제1정규화: 1:N 관계 분리
 
