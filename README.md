@@ -47,15 +47,116 @@
 - **개발 환경**: Google Colab, DBeaver
 - **기술 스택**: SQL, MySQL Partitioning, CSV Import
 
-## 🧪 파티셔닝 전략
-- **기법 적용**
 
-- **파티셔닝 기준 선정 이유**
+# 파티셔닝 전 / 후 메모리 5mb일때 소요 시간.
+
+실제 운영 환경에서는 훨씬 더 큰 자원으로 서비스를 운영하지만, 제한된 자원으로 운영하는 상황이 발생하고, 파티셔닝 전/후 비교를 명확히 확인하기 위해서, mysql에 할당되는 메모리 크기를 하한선까지 설정한 후, 결과 비교를 진행했습니다.
+
+mysql에서는 메모리 하한선은 5MB이며, 그 이하로 설정해도 Mysql에서 확인 시, 5MB는 확보되는 것을 확인할 수 있습니다. 
+
+### OS에서 mysql의 메모리 값을 5MB 미만으로 설정 후, mysql 내부에서 메모리 리소스 확인 결과
+
+OS에서 mysql의 메모리 사이즈를 1M로 설정해도 mysql에서 약 5M로 나오는 것을 확인할 수 있습니다. 
+
+**(innodb_buffer_pool_size =  MySQL 서버의 RAM(메모리)에 할당되는 공간)**
+
+<img width="875" height="205" alt="image" src="https://github.com/user-attachments/assets/69f9173f-899f-42fe-ba27-2ca0879ce8ed" />
 
 
-## ⚡ 성능 테스트
-- **테스트 시나리오**
-- **비교 항목**
+<img width="967" height="232" alt="image 1" src="https://github.com/user-attachments/assets/027fa8b4-6bc7-489e-86a8-af8177a61b1b" />
+
+
+## OS에서 mysql 메모리 값 설정 확인
+
+<img width="1042" height="141" alt="image 2" src="https://github.com/user-attachments/assets/222fe8a4-1bd5-4f55-b4c9-b6b6a34d174b" />
+
+
+
+### 메모리 5MB ,파티셔닝 전
+
+<img width="1288" height="331" alt="image 3" src="https://github.com/user-attachments/assets/fbcd68a3-5a2c-462a-a2b1-d6d467819834" />
+
+
+**파티셔닝을 하기 전에는 최대 2.11초까지 소요가 된다.**
+
+<img width="1161" height="577" alt="image 4" src="https://github.com/user-attachments/assets/93b8d2f7-44de-4645-b307-1248f2731b8e" />
+
+
+## 메모리 5MB, 파티셔닝 후
+
+데이터베이스에서 적용된 메모리 크기 확인을 위한 명령어.
+
+<img width="1288" height="331" alt="image 3" src="https://github.com/user-attachments/assets/8c3daaf7-dd21-4be2-9e64-8cc68355de36" />
+
+
+파티셔닝을 진행한 후, 최대 0.7초까지 확인했으며, 평균 0.3~0.4초 정도 소요되는 것을 확인할 수 있었습니다.
+
+<img width="1155" height="450" alt="image 5" src="https://github.com/user-attachments/assets/f348a8a1-9a07-4c34-a27d-f479bdcfbd43" />
+
+
+파티션 테이블 생성 및 데이터 삽입
+
+```sql
+CREATE TABLE survey_partitioned (
+  id INT NOT NULL AUTO_INCREMENT,
+  Age VARCHAR(512),  -- ← 수정됨
+  Country VARCHAR(512),
+  CompTotal double,
+  LanguageHaveWorkedWith varchar(512),
+  DatabaseHaveWorkedWith varchar(512),
+  RemoteWork VARCHAR(100),
+  MainBranch VARCHAR(128),
+  DevType TEXT,
+  PRIMARY KEY (id, Country)
+)
+PARTITION BY LIST COLUMNS(Country) (
+  PARTITION p_USA VALUES IN ('United States of America'),
+  PARTITION p_India VALUES IN ('India'),
+  PARTITION p_Germany VALUES IN ('Germany'),
+  PARTITION p_Others VALUES IN ('Others')
+);			-- 파티션 생성
+
+UPDATE merged_survey
+SET Country = 'Others'
+WHERE Country NOT IN (
+  'United States of America', 'India', 'Germany'
+);			-- 미국, 인도, 독일 제외한 다른 나라들 Others로 설정
+
+INSERT INTO survey_partitioned (
+  Age, Country, CompTotal, LanguageHaveWorkedWith,
+  DatabaseHaveWorkedWith, RemoteWork, MainBranch, DevType
+)
+SELECT
+  Age, Country, CompTotal, LanguageHaveWorkedWith,
+  DatabaseHaveWorkedWith, RemoteWork, MainBranch, DevType
+FROM merged_survey;	-- 파티션에 데이터 삽입
+```
+
+원본 테이블을 조회 후 성능 확인
+
+```sql
+-- 원본
+EXPLAIN ANALYZE
+SELECT *
+FROM merged_survey
+WHERE Country = 'United States of America' and age = 'Under 18 years old';
+```
+
+파티션이 적용된 테이블의 Country를 기준으로 조회 후 성능 확인 
+
+```sql
+
+-- 파티션
+EXPLAIN ANALYZE
+SELECT *
+FROM survey_partitioned
+WHERE Country = 'United States of America' and age = 'Under 18 years old';
+
+```
+
+
+
+
 
 
 ## ✅ 데이터 수집 및 병합
@@ -142,6 +243,16 @@ ORDER BY count DESC;
 <img width="532" height="678" alt="image 3" src="https://github.com/user-attachments/assets/eabe9aeb-45d3-45be-bae6-c0f9bfe47c6f" />
 
 ---
+## ✅ 결론
+
+<br>
+
+특히, 파티션 기준 컬럼(Country)을 WHERE 조건에 활용하는 경우, 빠른 파티션 프루닝이 이루어져 속도 개선이 두드러집니다.
+
+실서비스에서는 훨씬 높은 성능을 가진 자원에서 운영되므로, 파티셔닝 효과는 더욱 극대화될 수 있습니다.
+
+
+
 
 ## ✅ 회고
 
