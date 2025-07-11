@@ -31,4 +31,32 @@
   </tr>
 </table>
 
+## 📌 프로젝트 개요
+- **목표**: Stack Overflow의 개발자 설문 데이터를 MySQL에 적재하고, 파티셔닝을 적용하여 대용량 데이터 처리 성능을 실습하고 분석합니다.
+- **핵심 내용**: 파티셔닝 전/후 성능 비교, 쿼리 효율성 실험, 실시간 데이터 탐색성 향상
+
+## 📂 데이터셋
+- **출처**: [Stack Overflow Developer Survey](https://insights.stackoverflow.com/survey)
+- **형식**: CSV
+- **선택 컬럼**: user_id, Age, Country, LanguageHaveWorkedWith, CompTotal 등
+- **전처리 과정**:
+  - 불필요한 열 제거 + 3개년치 데이터 병합
+
+## 🧱 시스템 구성
+- **Database**: MySQL
+- **개발 환경**: Google Colab, DBeaver
+- **기술 스택**: SQL, MySQL Partitioning, CSV Import
+
+## 🧪 파티셔닝 전략
+- **기법 적용**
+
+- **파티셔닝 기준 선정 이유**
+
+
+## ⚡ 성능 테스트
+- **테스트 시나리오**
+- **비교 항목**
+
+## 고찰
+- ㅇㅇ
 ---
