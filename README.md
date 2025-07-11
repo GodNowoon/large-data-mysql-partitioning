@@ -60,15 +60,15 @@ OS에서 mysql의 메모리 사이즈를 1M로 설정해도 mysql에서 약 5M�
 
 **(innodb_buffer_pool_size =  MySQL 서버의 RAM(메모리)에 할당되는 공간)**
 
-<img width="875" height="205" alt="image" src="https://github.com/user-attachments/assets/69f9173f-899f-42fe-ba27-2ca0879ce8ed" />
+<img width="1288" height="205" alt="image" src="https://github.com/user-attachments/assets/69f9173f-899f-42fe-ba27-2ca0879ce8ed" />
 
 
-<img width="967" height="232" alt="image 1" src="https://github.com/user-attachments/assets/027fa8b4-6bc7-489e-86a8-af8177a61b1b" />
+<img width="1288" height="232" alt="image 1" src="https://github.com/user-attachments/assets/027fa8b4-6bc7-489e-86a8-af8177a61b1b" />
 
 
 ## OS에서 mysql 메모리 값 설정 확인
 
-<img width="1042" height="141" alt="image 2" src="https://github.com/user-attachments/assets/222fe8a4-1bd5-4f55-b4c9-b6b6a34d174b" />
+<img width="1288" height="141" alt="image 2" src="https://github.com/user-attachments/assets/222fe8a4-1bd5-4f55-b4c9-b6b6a34d174b" />
 
 
 
@@ -79,7 +79,7 @@ OS에서 mysql의 메모리 사이즈를 1M로 설정해도 mysql에서 약 5M�
 
 **파티셔닝을 하기 전에는 최대 2.11초까지 소요가 된다.**
 
-<img width="1161" height="577" alt="image 4" src="https://github.com/user-attachments/assets/93b8d2f7-44de-4645-b307-1248f2731b8e" />
+<img width="1288" height="577" alt="image 4" src="https://github.com/user-attachments/assets/93b8d2f7-44de-4645-b307-1248f2731b8e" />
 
 
 ## 메모리 5MB, 파티셔닝 후
