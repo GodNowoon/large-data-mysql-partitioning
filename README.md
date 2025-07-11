@@ -134,7 +134,6 @@ WHERE Country = 'United States of America' and age = 'Under 18 years old';
 ## 📈 쿼리 성능 비교
 
 ### ✅ 원본 테이블 (merged_survey)
-
 ```sql
 -> Filter: ((merged_survey.Age = 'Under 18 years old') 
          and (merged_survey.Country = 'United States of America'))  
@@ -149,11 +148,12 @@ WHERE Country = 'United States of America' and age = 'Under 18 years old';
        (cost=23706 rows=224547) (actual time=0.0984..357 rows=227889 loops=1)
 
 **파티셔닝을 하기 전에는 최대 2.11초까지 소요되었고 평균 1.7~1.8초정도 소요되었습니다**
+```
 
 
+### ✅ 파티션 태이블
 
-## 메모리 5MB, 파티셔닝 후
-
+```
 -> Filter: ((survey_partitioned.Age = 'Under 18 years old') 
          and (survey_partitioned.Country = 'United States of America'))  
    (cost=4439 rows=429) (actual time=0.442..138 rows=2171 loops=1)
