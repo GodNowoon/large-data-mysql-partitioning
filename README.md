@@ -1,5 +1,5 @@
 # large-data-mysql-partitioning
- > 📊 대용량 Stack Overflow 설문 데이터를 MySQL에 적재하고, 파티셔닝을 적용하여 RDBMS 성능 실습을 진행한 프로젝트입니다.
+ > 📊 대용량 Stack Overflow 설문 데이터를 MySQL에 적재하고, 파티셔닝을 적용하여 RDBMS 성능 실습을 진행한 프로젝트입니다.럄쥐
 
 ## 👥팀원
 <table>
