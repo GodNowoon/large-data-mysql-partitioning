@@ -151,7 +151,7 @@ WHERE Country = 'United States of America' and age = 'Under 18 years old';
 ```
 
 
-### ✅ 파티션 태이블
+### ✅ 파티션 테이블
 
 ```
 -> Filter: ((survey_partitioned.Age = 'Under 18 years old') 
